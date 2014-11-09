@@ -1,22 +1,106 @@
 """
-Convenience methods for plotting data on the map.
+Map plotter interface.
 """
 
-import pandas
+from IPython.display import HTML, display
+
+from .display import map_to_html, standalone_html
+
+__all__ = ['Map', 'GeoPoint']
+
+class GeoPoint(object):
+    def __init__(self, lat, lng):
+        self.lat = lat
+        self.lng = lng
+
+    @staticmethod
+    def parse(obj):
+        if isinstance(obj, GeoPoint):
+            return obj
+        elif (isinstance(obj, list) or isinstance(obj, tuple)) and len(obj) == 2:
+            return GeoPoint(lat=obj[0], lng=obj[1])
+        elif isinstance(obj, str):
+            parts = obj.split(',', 1)
+            return GeoPoint(lat=float(parts[0]), lng=float(parts[1]))
+        else:
+            raise ValueError('Cannot convert to GeoPoint')
+
+    def to_coord(self):
+        return (self.lat, self.lng)
 
 
-def placemarks(data_frame, map, lat_col, lng_col):
-    assert isinstance(data_frame, pandas.DataFrame)
+def _coordinates(point):
+    return GeoPoint.parse(point).to_coord()
 
-    for idx, row in data_frame.iterrows():
-        html_description = (
-            '<table>' +
-            ''.join('<tr><td><b>%s</b></td><td>%s</td></tr>' % (str(key), str(value)) for key, value in row.iteritems()) +
-            '</table>'
-        )
-        map.add_placemark(lat=row[lat_col], lng=row[lng_col], description=html_description)
 
-def heatmap(data_frame, map, lat_col, lng_col):
-    assert isinstance(data_frame, pandas.DataFrame)
-    heatmap_data = zip(data_frame.ix[:, lat_col].values, data_frame.ix[:, lng_col].values)
-    map.set_heatmap(heatmap_data)
+def _coordinates_many(points):
+    return [GeoPoint.parse(point).to_coord() for point in points]
+
+
+class Map(object):
+    """
+    Canvas for visualizing data on the interactive map.
+    """
+
+    def __init__(self):
+        self.center = [55.76, 37.64]
+        self.zoom = 8
+        self.objects = []
+
+    def set_state(self, center, zoom):
+        self.center = center
+        self.zoom = zoom
+
+    def add_object(self, obj):
+        self.objects.append(obj)
+
+    def add_placemark(self, point, hint=None, content=None):
+        self.add_object({
+            'type': 'Placemark',
+            'point': _coordinates(point),
+            'hint': hint,
+            'content': content,
+        })
+
+    def add_line(self, points, hint=None, content=None, color='#000000', width=4, opacity=0.5):
+        self.add_object({
+            'type': 'Line',
+            'points': _coordinates_many(points),
+            'hint': hint,
+            'content': content,
+            'color': color,
+            'width': width,
+            'opacity': opacity,
+        })
+
+    def add_heatmap(self, points):
+        self.add_object({
+            'type': 'Heatmap',
+            'points': _coordinates_many(points),
+        })
+
+    def to_dict(self):
+        """
+        Outputs JSON-serializable dictionary representation of the map plot.
+        """
+        return {
+            'state': {
+                'center': self.center,
+                'zoom': self.zoom,
+            },
+            'objects': self.objects,
+        }
+
+    def to_html(self, *args, **kwargs):
+        return map_to_html(self, *args, **kwargs)
+
+    def display(self, *args, **kwargs):
+        display(HTML(self.to_html(*args, **kwargs)))
+
+    def save_html(self, file, *args, **kwargs):
+        if isinstance(file, str):
+            with open(file, 'w') as f:
+                self.save_html(f, *args, **kwargs)
+        else:
+            file.write(standalone_html(self.to_html(*args, **kwargs)))
+
