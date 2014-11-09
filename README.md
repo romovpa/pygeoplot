@@ -57,7 +57,7 @@ center_point = (55.72, 37.64)
 m.set_state(center_point, zoom=12)
 ```
 
-#### Adding a placemark
+#### Adding placemarks
 
 ```python
 m.add_placemark((55.702770, 37.529184),
@@ -96,7 +96,7 @@ After completing your visualization, you could write it into stand-alone HTML fi
 m.save_html('map_with_data.html')
 ```
 
-An example of exported HTML from [Moscow CCTV cameras demo](http://nbviewer.ipython.org/github/romovpa/pygeoplot/blob/master/ipynb/DemoMoscowCCTV.ipynb):
+An example of exported HTML from [CCTV demo](http://nbviewer.ipython.org/github/romovpa/pygeoplot/blob/master/ipynb/DemoMoscowCCTV.ipynb):
 [ipynb/demo-moscow-cctv-heatmap.html](/ipynb/demo-moscow-cctv-heatmap.html).
 
 
