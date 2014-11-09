@@ -16,14 +16,14 @@ class GeoPoint(object):
     @staticmethod
     def parse(obj):
         if isinstance(obj, GeoPoint):
-            return obj
+            return obj # FIXME: why doesnt work?
         elif (isinstance(obj, list) or isinstance(obj, tuple)) and len(obj) == 2:
             return GeoPoint(lat=obj[0], lng=obj[1])
         elif isinstance(obj, str):
             parts = obj.split(',', 1)
             return GeoPoint(lat=float(parts[0]), lng=float(parts[1]))
         else:
-            raise ValueError('Cannot convert to GeoPoint')
+            raise ValueError('Cannot convert "%s" to GeoPoint' % repr(obj))
 
     def to_coord(self):
         return (self.lat, self.lng)
