@@ -8,6 +8,7 @@ from .display import map_to_html, standalone_html
 
 __all__ = ['Map', 'GeoPoint']
 
+
 class GeoPoint(object):
     def __init__(self, lat, lng):
         self.lat = lat
@@ -16,7 +17,7 @@ class GeoPoint(object):
     @staticmethod
     def parse(obj):
         if isinstance(obj, GeoPoint):
-            return obj # FIXME: why doesnt work?
+            return obj  # FIXME: why doesnt work?
         elif (isinstance(obj, list) or isinstance(obj, tuple)) and len(obj) == 2:
             return GeoPoint(lat=obj[0], lng=obj[1])
         elif isinstance(obj, str):
@@ -54,12 +55,14 @@ class Map(object):
     def add_object(self, obj):
         self.objects.append(obj)
 
-    def add_placemark(self, point, hint=None, content=None):
+    def add_placemark(self, point, hint=None, content=None, preset='islands#icon', icon_color=None):
         self.add_object({
             'type': 'Placemark',
             'point': _coordinates(point),
             'hint': hint,
             'content': content,
+            'preset': preset,
+            'iconColor': icon_color
         })
 
     def add_line(self, points, hint=None, content=None, color='#000000', width=4, opacity=0.5):
@@ -103,4 +106,3 @@ class Map(object):
                 self.save_html(f, *args, **kwargs)
         else:
             file.write(standalone_html(self.to_html(*args, **kwargs)))
-

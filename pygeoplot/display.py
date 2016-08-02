@@ -18,8 +18,12 @@ draw_functions = {
             hintContent: obj.hint,
             balloonContent: obj.content
         };
+        options = {
+            preset: obj.preset,
+            iconColor: obj.iconColor
+        };
         map.geoObjects.add(
-            new ymaps.Placemark(obj.point, properties)
+            new ymaps.Placemark(obj.point, properties, options)
         );
     },
 
