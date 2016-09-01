@@ -6,7 +6,7 @@ __all__ = ['placemarks_from_df']
 
 
 def placemarks_from_df(geomap, df, lat_col, lng_col, index_hint=True, row_content=True, preset_col=None,
-                       icon_color_col=None):
+                       color_col=None):
     assert isinstance(geomap, Map)
     assert isinstance(df, pandas.DataFrame)
 
@@ -24,5 +24,5 @@ def placemarks_from_df(geomap, df, lat_col, lng_col, index_hint=True, row_conten
                              hint=str(index) if index_hint else None,
                              content=html_description(row) if row_content else None,
                              preset=row[preset_col] if preset_col else None,
-                             icon_color=row[icon_color_col] if icon_color_col else None
+                             icon_color=row[color_col] if color_col else None
                              )

@@ -43,7 +43,8 @@ class Map(object):
     Canvas for visualizing data on the interactive map.
     """
 
-    def __init__(self):
+    def __init__(self, show_click_coords=False):
+        self.show_click_coords = show_click_coords
         self.center = [55.76, 37.64]
         self.zoom = 8
         self.objects = []
@@ -56,14 +57,20 @@ class Map(object):
         self.objects.append(obj)
 
     def add_placemark(self, point, hint=None, content=None, preset='islands#icon', icon_color=None):
-        self.add_object({
+        obj = {
             'type': 'Placemark',
             'point': _coordinates(point),
             'hint': hint,
-            'content': content,
-            'preset': preset,
-            'iconColor': icon_color
-        })
+            'content': content
+        }
+
+        if icon_color:
+            obj['iconColor'] = icon_color
+
+        if preset:
+            obj['preset'] = preset
+
+        self.add_object(obj)
 
     def add_line(self, points, hint=None, content=None, color='#000000', width=4, opacity=0.5):
         self.add_object({
@@ -92,6 +99,7 @@ class Map(object):
                 'zoom': self.zoom,
             },
             'objects': self.objects,
+            'showClickCoords': self.show_click_coords
         }
 
     def to_html(self, *args, **kwargs):

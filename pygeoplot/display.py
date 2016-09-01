@@ -18,10 +18,13 @@ draw_functions = {
             hintContent: obj.hint,
             balloonContent: obj.content
         };
-        options = {
-            preset: obj.preset,
-            iconColor: obj.iconColor
-        };
+        options = {};
+        if ('preset' in obj) {
+            options['preset'] = obj.preset
+        }
+        if ('iconColor' in obj) {
+            options['iconColor'] = obj.preset
+        }
         map.geoObjects.add(
             new ymaps.Placemark(obj.point, properties, options)
         );
@@ -58,6 +61,24 @@ function show_map(id, map_data) {
     function init() {
 
         yaMap = new ymaps.Map(id, map_data.state);
+
+        if (map_data.showClickCoords) {
+            yaMap.events.add('click', function (e) {
+                console.log(e);
+                if (!yaMap.balloon.isOpen()) {
+                    var coords = e.get('coordPosition');
+                    yaMap.balloon.open(coords, {
+                        contentBody:[
+                            coords[0].toPrecision(9),
+                            coords[1].toPrecision(9)
+                        ].join(', ')
+                    });
+                }
+                else {
+                    yaMap.balloon.close();
+                }
+            });
+        }
 
         map_data.objects.forEach(
             function(obj) {
@@ -108,6 +129,7 @@ TEMPLATE_STANDALONE_HTML = jinja2.Template("""
 <head>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
 </head>
 <body>
     {{ body }}
