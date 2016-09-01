@@ -22,10 +22,13 @@ draw_functions = {
         if ('preset' in obj) {
             options['preset'] = obj.preset;
             alert('add preset');
+            alert(obj.preset);
         }
         if ('iconColor' in obj) {
             options['iconColor'] = obj.color
             alert('add color');
+            alert(obj.color);
+            alert(obj.iconColor);
         }
         map.geoObjects.add(
             new ymaps.Placemark(obj.point, properties, options)
