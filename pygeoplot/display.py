@@ -25,7 +25,7 @@ draw_functions = {
             alert(obj.preset);
         }
         if ('iconColor' in obj) {
-            options['iconColor'] = obj.color
+            options['iconColor'] = obj.iconColor
             alert('add color');
             alert(obj.color);
             alert(obj.iconColor);
