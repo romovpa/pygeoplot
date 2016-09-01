@@ -66,9 +66,11 @@ class Map(object):
 
         if icon_color:
             obj['iconColor'] = icon_color
+            print('add color')
 
         if preset:
             obj['preset'] = preset
+            print('add preset')
 
         self.add_object(obj)
 
