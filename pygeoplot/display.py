@@ -104,7 +104,7 @@ TEMPLATE_HTML = jinja2.Template("""
 
     require.config({
         paths: {
-            "ymaps": "http://api-maps.yandex.ru/2.1/?lang=ru_RU",
+            "ymaps": "https://api-maps.yandex.ru/2.1/?lang=ru_RU",
             "heatmap": "https://dl.dropboxusercontent.com/u/20300574/Heatmap.min"
         }
     });
