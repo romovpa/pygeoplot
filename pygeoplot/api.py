@@ -8,6 +8,7 @@ from .display import map_to_html, standalone_html
 
 __all__ = ['Map', 'GeoPoint']
 
+
 class GeoPoint(object):
     def __init__(self, lat, lng):
         self.lat = lat
@@ -16,7 +17,7 @@ class GeoPoint(object):
     @staticmethod
     def parse(obj):
         if isinstance(obj, GeoPoint):
-            return obj # FIXME: why doesnt work?
+            return obj  # FIXME: why doesnt work?
         elif (isinstance(obj, list) or isinstance(obj, tuple)) and len(obj) == 2:
             return GeoPoint(lat=obj[0], lng=obj[1])
         elif isinstance(obj, str):
@@ -42,7 +43,8 @@ class Map(object):
     Canvas for visualizing data on the interactive map.
     """
 
-    def __init__(self):
+    def __init__(self, show_click_coords=False):
+        self.show_click_coords = show_click_coords
         self.center = [55.76, 37.64]
         self.zoom = 8
         self.objects = []
@@ -54,13 +56,21 @@ class Map(object):
     def add_object(self, obj):
         self.objects.append(obj)
 
-    def add_placemark(self, point, hint=None, content=None):
-        self.add_object({
+    def add_placemark(self, point, hint=None, content=None, preset='islands#icon', icon_color=None):
+        obj = {
             'type': 'Placemark',
             'point': _coordinates(point),
             'hint': hint,
-            'content': content,
-        })
+            'content': content
+        }
+
+        if icon_color:
+            obj['iconColor'] = icon_color
+
+        if preset:
+            obj['preset'] = preset
+
+        self.add_object(obj)
 
     def add_line(self, points, hint=None, content=None, color='#000000', width=4, opacity=0.5):
         self.add_object({
@@ -89,6 +99,7 @@ class Map(object):
                 'zoom': self.zoom,
             },
             'objects': self.objects,
+            'showClickCoords': self.show_click_coords
         }
 
     def to_html(self, *args, **kwargs):
@@ -103,4 +114,3 @@ class Map(object):
                 self.save_html(f, *args, **kwargs)
         else:
             file.write(standalone_html(self.to_html(*args, **kwargs)))
-
